@@ -3,8 +3,13 @@
 #include <stack>
 
 using namespace System::Drawing;
+using namespace std;
 
-
+struct TCurrLine {
+	TChart *tc;
+	TPoint *pb;
+	TPoint *pe;
+};
 
 class TRoot {
 	
@@ -71,6 +76,7 @@ class TChart : public TRoot {
 
 protected:
 	TRoot *pBegin, *pEnd;
+	stack <TCurrLine> st;
 	
 
 public:
@@ -121,7 +127,6 @@ public:
 			pe = dynamic_cast<TPoint*>(Show(gr, tc->pBegin));
 
 			if (pb && pe) {
-
 				gr -> DrawLine(Pens::Black, pb, pe);
 				return pe;
 			}
