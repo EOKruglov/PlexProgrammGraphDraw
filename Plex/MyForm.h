@@ -18,7 +18,7 @@ namespace Plex {
 		bool flag;
 		TChart *pFirst;
 		TChart *pCatch;
-		TPoint *p1, *p2;
+		TPoint *p1, *p2, *currentPoint;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Button^  button2;
 			 Graphics ^gr;
@@ -92,6 +92,7 @@ namespace Plex {
 			this->Controls->Add(this->button1);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
+			this->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::MyForm_MouseDoubleClick);
 			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::MyForm_MouseDown);
 			this->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::MyForm_MouseMove);
 			this->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::MyForm_MouseUp);
@@ -164,7 +165,37 @@ namespace Plex {
 		pFirst->Move(gr, 10, 10);
 	}
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
+	pFirst->Hide(gr);
+	pFirst = nullptr;
+}
+private: System::Void MyForm_MouseDoubleClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+	TChart *tmp = pFirst->Catch(e->X, e->Y);
+	pCatch = pFirst;
+	if (tmp != nullptr) {
+		if (e->Button.ToString() == "Left") {
+			pCatch -> SetActive(false);
+			pCatch = tmp;
+			pCatch->SetActive(true);
+		}
+		if (e->Button.ToString() == "Right") {
+			tmp->SetVisible(false);
+		}
+	}
 
+	TPoint *p = pFirst->CatchPoint(e->X, e->Y);
+	if (p != nullptr) {
+		if (e->Button.ToString() == "Left") {
+			currentPoint->SetActive(false);
+			currentPoint = p;
+			currentPoint->SetActive(true);
+		}
+		if (e->Button.ToString() == "Right") {
+			p->SetVisible(false);
+		}
+	}
+
+	pFirst->Hide(gr);
+	pFirst->Show(gr);
 }
 };
 }

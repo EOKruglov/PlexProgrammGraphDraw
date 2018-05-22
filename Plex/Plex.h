@@ -107,10 +107,12 @@ protected:
 	stack <TCurrLine> st;
 	
 	
+	
 
 public:
 	TChart *pRes;
 	bool first;
+	stack<TChart*> stackCatch;
 
 	TChart(TRoot *pB = NULL, TRoot *pE = NULL) {
 		pBegin = pB;
@@ -413,6 +415,147 @@ public:
 
 	}
 
+	TChart* Catch(int _x, int _y)
+	{
+		TCurrLine curr;
+		TPoint *tmp;
 
+		curr.tc = this;
+		curr.pb = curr.pe = nullptr;
+
+		while (!st.empty())
+			st.pop();
+
+		st.push(curr);
+
+		while (!st.empty())
+		{
+			curr = st.top();
+			st.pop();
+
+			while (!curr.pb)
+			{
+				tmp = dynamic_cast<TPoint*>(curr.tc->pBegin);
+				if (tmp)
+					curr.pb = tmp;
+				else
+				{
+					st.push(curr);
+					curr.tc = (TChart*)curr.tc->pBegin;
+				}
+
+			}
+			if (!curr.pe)
+			{
+				tmp = dynamic_cast<TPoint*>(curr.tc->pEnd);
+				if (tmp)
+					curr.pe = tmp;
+				else
+				{
+					st.push(curr);
+					curr.tc = (TChart*)curr.tc->pEnd;
+					curr.pb = nullptr;
+					st.push(curr);
+				}
+			}
+			if (curr.pb && curr.pe)
+			{
+				int a = curr.pe->GetY() - curr.pb->GetY();
+				int b = curr.pb->GetX() - curr.pe->GetX();
+				int c = (curr.pb->GetY() - curr.pe->GetY()) * curr.pb->GetX() + 
+					(curr.pe->GetX() - curr.pb->GetX()) * curr.pb->GetY();
+				double distance = fabs(a * _x + b * _y + c) / sqrt(a*a + b*b);
+
+				if (distance < 10.0)
+					return curr.tc;
+				tmp = curr.pe;
+
+				if (!st.empty())
+				{
+					curr = st.top();
+					st.pop();
+
+					if (!curr.pb)
+						curr.pb = tmp;
+					else
+						curr.pe = tmp;
+
+					st.push(curr);
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	TPoint* CatchPoint(int _x, int _y)
+	{
+		TCurrLine curr;
+		TPoint *tmp;
+
+		curr.tc = this;
+		curr.pb = curr.pe = nullptr;
+
+		while (!st.empty())
+			st.pop();
+		st.push(curr);
+
+		while (!st.empty())
+		{
+			curr = st.top();
+			st.pop();
+
+			while (!curr.pb) {
+				tmp = dynamic_cast<TPoint *>(curr.tc->pBegin);
+				if (tmp)
+					curr.pb = tmp;
+				else {
+					st.push(curr);
+					curr.tc = (TChart *)curr.tc->pBegin;
+				}
+			}
+
+			if (!curr.pe) 
+			{
+				tmp = dynamic_cast<TPoint *>(curr.tc->pEnd);
+				if (tmp)
+					curr.pe = tmp;
+				else {
+					st.push(curr);
+					curr.tc = (TChart *)curr.tc->pEnd;
+					curr.pb = nullptr;
+					st.push(curr);
+				}
+			}
+
+			if (curr.pb && curr.pe) 
+			{
+				double distanceB = sqrt((curr.pb->GetX() - _x) * (curr.pb->GetX() - _x) 
+					+ (curr.pb->GetY() - _y) * (curr.pb->GetY() - _y));
+				double distanceE = sqrt((curr.pe->GetX() - _x) * (curr.pe->GetX() - _x) + 
+					(curr.pe->GetY() - _y) * (curr.pe->GetY() - _y));
+
+				if (distanceB < 10)
+					return curr.pb;
+				if (distanceE < 10)
+					return curr.pe;
+
+				tmp = curr.pe;
+
+				if (!st.empty()) 
+				{
+					curr = st.top();
+					st.pop();
+
+					if (!curr.pb)
+						curr.pb = tmp;
+					else 
+						curr.pe = tmp;
+
+					st.push(curr);
+				}
+			}
+		}
+		return nullptr;
+	}
 
 };
