@@ -19,8 +19,9 @@ namespace Plex {
 		TChart *pFirst;
 		TChart *pCatch;
 		TPoint *p1, *p2, *currentPoint;
-	private: System::Windows::Forms::Button^  button1;
+
 	private: System::Windows::Forms::Button^  button2;
+	private: System::Windows::Forms::Button^  button1;
 			 Graphics ^gr;
 	public:
 		MyForm(void)
@@ -59,23 +60,13 @@ namespace Plex {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->button2 = (gcnew System::Windows::Forms::Button());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
-			// 
-			// button1
-			// 
-			this->button1->Location = System::Drawing::Point(983, 30);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 0;
-			this->button1->Text = L"Move";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(983, 88);
+			this->button2->Location = System::Drawing::Point(1015, 24);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 23);
 			this->button2->TabIndex = 1;
@@ -83,13 +74,24 @@ namespace Plex {
 			this->button2->UseVisualStyleBackColor = true;
 			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
 			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(1015, 80);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(75, 23);
+			this->button1->TabIndex = 2;
+			this->button1->Text = L"Move";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click_1);
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1140, 749);
-			this->Controls->Add(this->button2);
+			this->BackColor = System::Drawing::Color::White;
+			this->ClientSize = System::Drawing::Size(1140, 741);
 			this->Controls->Add(this->button1);
+			this->Controls->Add(this->button2);
 			this->Name = L"MyForm";
 			this->Text = L"MyForm";
 			this->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::MyForm_MouseDoubleClick);
@@ -111,6 +113,8 @@ namespace Plex {
 			gr->DrawLine(Pens::White, x1, y1, x2, y2);
 			x2 = e->X;
 			y2 = e->Y;
+			if(pFirst != nullptr)
+				pFirst->Show(gr);
 			gr->DrawLine(Pens::Black, x1, y1, x2, y2);
 		}
 	}
@@ -196,6 +200,9 @@ private: System::Void MyForm_MouseDoubleClick(System::Object^  sender, System::W
 
 	pFirst->Hide(gr);
 	pFirst->Show(gr);
+}
+private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
+	pFirst->Move(gr, 5, 5);
 }
 };
 }
